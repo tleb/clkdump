@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +11,7 @@ struct clk_info {
 	clockid_t id;
 	const char *name;
 	struct timespec previous;
+	bool disabled;
 };
 
 #define CLK_INFO(x) { .id = x, .name = #x }
@@ -72,10 +74,14 @@ int main(void)
 			struct timespec tp;
 			int ret;
 
+			if (clks[i].disabled)
+				continue;
+
 			ret = clock_gettime(clks[i].id, &tp);
 			if (ret) {
 				fprintf(stderr, "clock_gettime(%s) failed: %s\n",
 					clks[i].name, strerror(errno));
+				clks[i].disabled = true;
 				continue;
 			}
 
