@@ -74,7 +74,7 @@ int main(void)
 
 			ret = clock_gettime(clks[i].id, &tp);
 			if (ret) {
-				fprintf(stderr, "clock_gettime(%s) failed: %s",
+				fprintf(stderr, "clock_gettime(%s) failed: %s\n",
 					clks[i].name, strerror(errno));
 				continue;
 			}
