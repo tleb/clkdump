@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/syscall.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -77,7 +78,8 @@ int main(void)
 			if (clks[i].disabled)
 				continue;
 
-			ret = clock_gettime(clks[i].id, &tp);
+			/* Avoid vDSO by doing syscall manually. */
+			ret = syscall(SYS_clock_gettime, clks[i].id, &tp);
 			if (ret) {
 				fprintf(stderr, "clock_gettime(%s) failed: %s\n",
 					clks[i].name, strerror(errno));
